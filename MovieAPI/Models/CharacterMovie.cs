@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Film_API.Models
+namespace MovieAPI.Models
 {
     public class CharacterMovie
     {
