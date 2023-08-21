@@ -90,16 +90,18 @@ namespace MovieAPI.Controllers
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        public async Task<ActionResult<ReadMoviesDto>> PostMovie(CreateMoviesDto movieDto)
         {
           if (_context.Movies == null)
           {
               return Problem("Entity set 'MovieDbContext.Movies'  is null.");
           }
-            _context.Movies.Add(movie);
+
+            var movieDomain = _mapper.Map<Movie>(movieDto);
+            _context.Movies.Add(movieDomain);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovie", new { id = movie.Id }, movie);
+            return CreatedAtAction("GetMovie", new { id = movieDomain.Id }, movieDto);
         }
 
         // DELETE: api/Movies/5
