@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieAPI.DataAccess;
+using MovieAPI.DTOs.MoviesDtos;
 using MovieAPI.Models;
 
 namespace MovieAPI.Controllers
@@ -15,21 +17,25 @@ namespace MovieAPI.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly MovieDbContext _context;
+        private readonly IMapper _mapper;
 
-        public MoviesController(MovieDbContext context)
+        public MoviesController(MovieDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Movies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        public async Task<ActionResult<IEnumerable<ReadMoviesDto>>> GetMovies()
         {
-          if (_context.Movies == null)
-          {
-              return NotFound();
-          }
-            return await _context.Movies.ToListAsync();
+            if (_context.Movies == null)
+            {
+                  return NotFound();
+            }
+            var moviesDomain = await _context.Movies.ToListAsync();
+            var movieDto = _mapper.Map<List<ReadMoviesDto>>(moviesDomain);
+            return movieDto;
         }
 
         // GET: api/Movies/5

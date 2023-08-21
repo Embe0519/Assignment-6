@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DTOs\CharactersDtos\" />
+    <Folder Include="DTOs\FranchisesDtos\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
