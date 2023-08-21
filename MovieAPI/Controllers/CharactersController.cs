@@ -91,16 +91,19 @@ namespace MovieAPI.Controllers
         // POST: api/Characters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Character>> PostCharacter(Character character)
+        public async Task<ActionResult<ReadCharacterDto>> PostCharacter(CreateCharacterDto characterDto)
         {
           if (_context.Characters == null)
           {
               return Problem("Entity set 'MovieDbContext.Characters'  is null.");
           }
-            _context.Characters.Add(character);
+           
+
+            var characterDomain = _mapper.Map<Character>(characterDto);
+            _context.Characters.Add(characterDomain);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCharacter", new { id = character.Id }, character);
+            return CreatedAtAction("GetCharacter", new { id = characterDomain.Id }, characterDto);
         }
 
         // DELETE: api/Characters/5
