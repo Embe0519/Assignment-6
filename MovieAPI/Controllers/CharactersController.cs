@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MovieAPI.DataAccess;
 using MovieAPI.Models;
 
 namespace MovieAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class CharactersController : Controller
+    public class CharactersController : ControllerBase
     {
         private readonly MovieDbContext _context;
 
@@ -21,150 +21,104 @@ namespace MovieAPI.Controllers
             _context = context;
         }
 
-        // GET: Characters
+        // GET: api/Characters
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
         {
-            return _context.Characters != null ?
-                        View(await _context.Characters.ToListAsync()) :
-                        Problem("Entity set 'MovieDbContext.Characters'  is null.");
+          if (_context.Characters == null)
+          {
+              return NotFound();
+          }
+            return await _context.Characters.ToListAsync();
         }
 
-        // GET: Characters/Details/5
+        // GET: api/Characters/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<ActionResult<Character>> GetCharacter(int id)
         {
-            if (id == null || _context.Characters == null)
-            {
-                return NotFound();
-            }
-
-            var character = await _context.Characters
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (character == null)
-            {
-                return NotFound();
-            }
-
-            return View(character);
-        }
-
-        // GET: Characters/Create
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Characters/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Alias,Gender,Picture")] Character character)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(character);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(character);
-        }
-
-        // GET: Characters/Edit/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Characters == null)
-            {
-                return NotFound();
-            }
-
+          if (_context.Characters == null)
+          {
+              return NotFound();
+          }
             var character = await _context.Characters.FindAsync(id);
+
             if (character == null)
             {
                 return NotFound();
             }
-            return View(character);
+
+            return character;
         }
 
-        // POST: Characters/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost("{id}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Alias,Gender,Picture")] Character character)
+        // PUT: api/Characters/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCharacter(int id, Character character)
         {
             if (id != character.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            _context.Entry(character).State = EntityState.Modified;
+
+            try
             {
-                try
-                {
-                    _context.Update(character);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CharacterExists(character.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
             }
-            return View(character);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CharacterExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Characters/Delete/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Delete(int? id)
+        // POST: api/Characters
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Character>> PostCharacter(Character character)
         {
-            if (id == null || _context.Characters == null)
+          if (_context.Characters == null)
+          {
+              return Problem("Entity set 'MovieDbContext.Characters'  is null.");
+          }
+            _context.Characters.Add(character);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetCharacter", new { id = character.Id }, character);
+        }
+
+        // DELETE: api/Characters/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCharacter(int id)
+        {
+            if (_context.Characters == null)
             {
                 return NotFound();
             }
-
-            var character = await _context.Characters
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var character = await _context.Characters.FindAsync(id);
             if (character == null)
             {
                 return NotFound();
             }
 
-            return View(character);
-        }
-
-        // POST: Characters/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Characters == null)
-            {
-                return Problem("Entity set 'MovieDbContext.Characters'  is null.");
-            }
-            var character = await _context.Characters.FindAsync(id);
-            if (character != null)
-            {
-                _context.Characters.Remove(character);
-            }
-            
+            _context.Characters.Remove(character);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool CharacterExists(int id)
         {
-          return (_context.Characters?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Characters?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

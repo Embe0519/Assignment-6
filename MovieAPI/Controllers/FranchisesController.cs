@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MovieAPI.DataAccess;
 using MovieAPI.Models;
 
 namespace MovieAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class FranchisesController : Controller
+    public class FranchisesController : ControllerBase
     {
         private readonly MovieDbContext _context;
 
@@ -21,150 +21,104 @@ namespace MovieAPI.Controllers
             _context = context;
         }
 
-        // GET: Franchises
+        // GET: api/Franchises
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<ActionResult<IEnumerable<Franchise>>> GetFranchises()
         {
-            return _context.Franchises != null ?
-                        View(await _context.Franchises.ToListAsync()) :
-                        Problem("Entity set 'MovieDbContext.Franchises'  is null.");
+          if (_context.Franchises == null)
+          {
+              return NotFound();
+          }
+            return await _context.Franchises.ToListAsync();
         }
 
-        // GET: Franchises/Details/5
+        // GET: api/Franchises/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<ActionResult<Franchise>> GetFranchise(int id)
         {
-            if (id == null || _context.Franchises == null)
-            {
-                return NotFound();
-            }
-
-            var franchise = await _context.Franchises
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (franchise == null)
-            {
-                return NotFound();
-            }
-
-            return View(franchise);
-        }
-
-        // GET: Franchises/Create
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Franchises/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Franchise franchise)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(franchise);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(franchise);
-        }
-
-        // GET: Franchises/Edit/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Franchises == null)
-            {
-                return NotFound();
-            }
-
+          if (_context.Franchises == null)
+          {
+              return NotFound();
+          }
             var franchise = await _context.Franchises.FindAsync(id);
+
             if (franchise == null)
             {
                 return NotFound();
             }
-            return View(franchise);
+
+            return franchise;
         }
 
-        // POST: Franchises/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost("{id}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Franchise franchise)
+        // PUT: api/Franchises/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutFranchise(int id, Franchise franchise)
         {
             if (id != franchise.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            _context.Entry(franchise).State = EntityState.Modified;
+
+            try
             {
-                try
-                {
-                    _context.Update(franchise);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FranchiseExists(franchise.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
             }
-            return View(franchise);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FranchiseExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Franchises/Delete/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Delete(int? id)
+        // POST: api/Franchises
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Franchise>> PostFranchise(Franchise franchise)
         {
-            if (id == null || _context.Franchises == null)
+          if (_context.Franchises == null)
+          {
+              return Problem("Entity set 'MovieDbContext.Franchises'  is null.");
+          }
+            _context.Franchises.Add(franchise);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetFranchise", new { id = franchise.Id }, franchise);
+        }
+
+        // DELETE: api/Franchises/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFranchise(int id)
+        {
+            if (_context.Franchises == null)
             {
                 return NotFound();
             }
-
-            var franchise = await _context.Franchises
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var franchise = await _context.Franchises.FindAsync(id);
             if (franchise == null)
             {
                 return NotFound();
             }
 
-            return View(franchise);
-        }
-
-        // POST: Franchises/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Franchises == null)
-            {
-                return Problem("Entity set 'MovieDbContext.Franchises'  is null.");
-            }
-            var franchise = await _context.Franchises.FindAsync(id);
-            if (franchise != null)
-            {
-                _context.Franchises.Remove(franchise);
-            }
-            
+            _context.Franchises.Remove(franchise);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool FranchiseExists(int id)
         {
-          return (_context.Franchises?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Franchises?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
