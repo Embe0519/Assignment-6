@@ -91,16 +91,18 @@ namespace MovieAPI.Controllers
         // POST: api/Franchises
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Franchise>> PostFranchise(Franchise franchise)
+        public async Task<ActionResult<ReadFranchisesDto>> PostFranchise(CreateFranchisesDto franchiseDto)
         {
           if (_context.Franchises == null)
           {
               return Problem("Entity set 'MovieDbContext.Franchises'  is null.");
           }
-            _context.Franchises.Add(franchise);
+
+            var franchiseDomain = _mapper.Map<Franchise>(franchiseDto);
+            _context.Franchises.Add(franchiseDomain);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFranchise", new { id = franchise.Id }, franchise);
+            return CreatedAtAction("GetFranchise", new { id = franchiseDomain.Id }, franchiseDto);
         }
 
         // DELETE: api/Franchises/5
