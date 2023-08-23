@@ -46,38 +46,38 @@ namespace MovieAPI.Controllers
             return Ok(moviesDto);
         }
 
-        // GET: api/albums/5
+        // GET: api/movies/5
         /// <summary>
-        /// Get an Album by Id.
+        /// Get an Movie by Id.
         /// </summary>
-        /// <param name="id">The Id of the Album you want to get.</param>
-        /// <returns>An Album object.</returns>
+        /// <param name="id">The Id of the Movie you want to get.</param>
+        /// <returns>An Movie object.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ReadMoviesDto>> GetAlbum(int id)
+        public async Task<ActionResult<ReadMoviesDto>> GetMovie(int id)
         {
-            // Use service to get album by id
-            var album = await _service.GetByIdAsync(id);
+            // Use service to get movie by id
+            var movie = await _service.GetByIdAsync(id);
 
             // Check if found item is null
-            if (album == null)
+            if (movie == null)
             {
                 return NotFound();
             }
 
             // Map domain to dto
-            var albumDto = _mapper.Map<ReadMoviesDto>(album);
+            var movieDto = _mapper.Map<ReadMoviesDto>(movie);
 
-            return Ok(albumDto);
+            return Ok(movieDto);
         }
 
-        // GET: api/albums/1/artists
+        // GET: api/movies/1/characters
         /// <summary>
-        /// Get all of the Artists associated with a specific Album.
+        /// Get all of the characters associated with a specific Movie.
         /// </summary>
-        /// <param name="id">The Id of the Album whose Artists you want to get.</param>
-        /// <returns>An array of Artists.</returns>
-        [HttpGet("{id}/artists")]
-        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetArtistsByAlbumId(int id)
+        /// <param name="id">The Id of the Movie whose Artists you want to get.</param>
+        /// <returns>An array of Characters.</returns>
+        [HttpGet("{id}/movies")]
+        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetCharactersByMovieId(int id)
         {
             if (!await MovieExistsAsync(id))
             {
@@ -98,15 +98,15 @@ namespace MovieAPI.Controllers
             return Ok(characterDtos);
         }
 
-        // PUT: api/albums/5
+        // PUT: api/movies/5
         /// <summary>
-        /// Update an Album.
+        /// Update an Movie.
         /// </summary>
-        /// <param name="id">The Id of the Album you want to update.</param>
-        /// <param name="movieDto">The updated Album object.</param>
+        /// <param name="id">The Id of the Movie you want to update.</param>
+        /// <param name="movieDto">The updated Movie object.</param>
         /// <returns>An Http response code based on the outcome of the transaction.</returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAlbum(int id, UpdateMoviesDto movieDto)
+        public async Task<IActionResult> PutMovie(int id, UpdateMoviesDto movieDto)
         {
             // Map dto to domain object
             var movie = _mapper.Map<Movie>(movieDto);
@@ -117,21 +117,27 @@ namespace MovieAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-
-               
+                if (!await MovieExistsAsync(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
             return NoContent();
         }
 
-        // PUT: api/Albums/1/artists
+        // PUT: api/Movie/1/Characters
         /// <summary>
-        /// Update the Artists associated with a specific Album.
+        /// Update the Characters associated with a specific Movie.
         /// </summary>
-        /// <param name="id">The Id of the Album whose Artists you want to update.</param>
-        /// <param name="characterIds">A list of Artist Ids who are associated with the Album.</param>
+        /// <param name="id">The Id of the Movie whose Artists you want to update.</param>
+        /// <param name="characterIds">A list of Characters Ids who are associated with the Movie.</param>
         /// <returns>An Http response code based on the outcome of the transaction.</returns>
-        [HttpPut("{id}/artists")]
+        [HttpPut("{id}/characters")]
         public async Task<IActionResult> UpdateMovieCharacter(int id, IEnumerable<int> characterIds)
         {
             if (!await MovieExistsAsync(id))
@@ -141,8 +147,7 @@ namespace MovieAPI.Controllers
 
             try
             {
-                // Fetch the album to be updated
-                // NB: Important to retrieve the base entity including related data
+                // Fetch the movie to be updated
                 var movieToUpdate = await _service.GetMovieIncludingCharacters(id);
 
                 if (movieToUpdate == null)
@@ -162,14 +167,14 @@ namespace MovieAPI.Controllers
         }
 
 
-        // POST: api/albums
+        // POST: api/movies
         /// <summary>
-        /// Add a new Album.
+        /// Add a new Movie.
         /// </summary>
-        /// <param name="moviesDto">The new Album object.</param>
-        /// <returns>The newly added Album object.</returns>
+        /// <param name="moviesDto">The new Movie object.</param>
+        /// <returns>The newly added Movie object.</returns>
         [HttpPost]
-        public async Task<ActionResult<ReadMoviesDto>> PostAlbum(CreateMoviesDto moviesDto)
+        public async Task<ActionResult<ReadMoviesDto>> PostMovie(CreateMoviesDto moviesDto)
         {
             // Map dto to domain object
             var movie = _mapper.Map<Movie>(moviesDto);
@@ -178,11 +183,11 @@ namespace MovieAPI.Controllers
             return CreatedAtAction("Get movie", movieId, moviesDto);
         }
 
-        // DELETE: api/albums/5
+        // DELETE: api/movies/5
         /// <summary>
-        /// Delete an Album.
+        /// Delete a Movie.
         /// </summary>
-        /// <param name="id">The Id of the Album you want to delete.</param>
+        /// <param name="id">The Id of the Movie you want to delete.</param>
         /// <returns>An Http response code based on the outcome of the transaction.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
@@ -192,23 +197,23 @@ namespace MovieAPI.Controllers
                 return NotFound();
             }
 
-            var album = await _service.GetByIdAsync(id);
+            var movie = await _service.GetByIdAsync(id);
 
-            if (album == null)
+            if (movie == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteAsync(album);
+            await _service.DeleteAsync(movie);
 
             return NoContent();
         }
 
         /// <summary>
-        /// A helper method to check if a specific Album exists.
+        /// A helper method to check if a specific Movie exists.
         /// </summary>
-        /// <param name="id">The Id of the Album you want to check exists.</param>
-        /// <returns>True if the Album exists.</returns>
+        /// <param name="id">The Id of the Movie you want to check exists.</param>
+        /// <returns>True if the Movie exists.</returns>
         private async Task<bool> MovieExistsAsync(int id)
         {
             return await _service.ExistsWithIdAsync(id);
