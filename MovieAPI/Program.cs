@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MovieAPI.DataAccess;
+using MovieAPI.Services.CharacterServices;
+using MovieAPI.Services.FranchiseServices;
+using MovieAPI.Services.MovieServices;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +47,10 @@ builder.Services.AddSwaggerGen(opt =>
     opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
+// Add services using Dependency Injection
+builder.Services.AddScoped<IMovieService, MovieService>();
+//builder.Services.AddScoped<ICharacterService, CharacterService>();
+//builder.Services.AddScoped<IFranschiseService, FranchiseService>();
 
 
 var app = builder.Build();
