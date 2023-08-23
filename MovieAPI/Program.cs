@@ -49,8 +49,8 @@ builder.Services.AddSwaggerGen(opt =>
 
 // Add services using Dependency Injection
 builder.Services.AddScoped<IMovieService, MovieService>();
-//builder.Services.AddScoped<ICharacterService, CharacterService>();
-//builder.Services.AddScoped<IFranschiseService, FranchiseService>();
+builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<IFranschiseService, FranchiseService>();
 
 
 var app = builder.Build();
