@@ -15,7 +15,7 @@ using MovieAPI.Services.MovieServices;
 
 namespace MovieAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/movies")]
     [ApiController]
     [Produces(MediaTypeNames.Application.Json)]
     [Consumes(MediaTypeNames.Application.Json)]
@@ -103,7 +103,7 @@ namespace MovieAPI.Controllers
         /// Update an Album.
         /// </summary>
         /// <param name="id">The Id of the Album you want to update.</param>
-        /// <param name="albumDto">The updated Album object.</param>
+        /// <param name="movieDto">The updated Album object.</param>
         /// <returns>An Http response code based on the outcome of the transaction.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAlbum(int id, UpdateMoviesDto movieDto)
@@ -129,7 +129,7 @@ namespace MovieAPI.Controllers
         /// Update the Artists associated with a specific Album.
         /// </summary>
         /// <param name="id">The Id of the Album whose Artists you want to update.</param>
-        /// <param name="artistIds">A list of Artist Ids who are associated with the Album.</param>
+        /// <param name="characterIds">A list of Artist Ids who are associated with the Album.</param>
         /// <returns>An Http response code based on the outcome of the transaction.</returns>
         [HttpPut("{id}/artists")]
         public async Task<IActionResult> UpdateMovieCharacter(int id, IEnumerable<int> characterIds)
@@ -166,7 +166,7 @@ namespace MovieAPI.Controllers
         /// <summary>
         /// Add a new Album.
         /// </summary>
-        /// <param name="albumDto">The new Album object.</param>
+        /// <param name="moviesDto">The new Album object.</param>
         /// <returns>The newly added Album object.</returns>
         [HttpPost]
         public async Task<ActionResult<ReadMoviesDto>> PostAlbum(CreateMoviesDto moviesDto)
