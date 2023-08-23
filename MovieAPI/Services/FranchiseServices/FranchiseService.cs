@@ -19,9 +19,9 @@ namespace MovieAPI.Services.FranchiseServices
             await _context.SaveChangesAsync();
         }
 
-        Task<Franchise> IRepository<Franchise>.GetByIdAsync(int id)
+        public async Task<Franchise> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Franchises.FindAsync(id);
         }
 
         async Task<ICollection<Franchise>> IRepository<Franchise>.GetAllAsync()
@@ -42,9 +42,9 @@ namespace MovieAPI.Services.FranchiseServices
             _context.Franchises.Remove(entity);
             await _context.SaveChangesAsync();
         }
-        public Task<bool> ExistsWithIdAsync(int id)
+        public async Task<bool> ExistsWithIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return (_context.Franchises?.Any(franchise => franchise.Id == id)).GetValueOrDefault();
         }
     }
 }

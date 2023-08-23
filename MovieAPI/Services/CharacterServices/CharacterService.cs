@@ -56,9 +56,9 @@ namespace MovieAPI.Services.CharacterServices
             await _context.SaveChangesAsync();
         }
 
-        Task<Character> IRepository<Character>.GetByIdAsync(int id)
+        public async Task<Character> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Characters.FindAsync(id);
         }
 
         async Task<ICollection<Character>> IRepository<Character>.GetAllAsync()
@@ -79,9 +79,9 @@ namespace MovieAPI.Services.CharacterServices
             _context.Characters.Remove(entity);
             await _context.SaveChangesAsync();
         }
-        public Task<bool> ExistsWithIdAsync(int id)
+        public async Task<bool> ExistsWithIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return (_context.Characters?.Any(character => character.Id == id)).GetValueOrDefault();
         }
     }
 }
