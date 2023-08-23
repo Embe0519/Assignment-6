@@ -1,6 +1,9 @@
-﻿namespace MovieAPI.Services.FranchiseServices
+﻿using MovieAPI.Models;
+
+namespace MovieAPI.Services.FranchiseServices
 {
-    public class IFranschiseService
+    public interface IFranschiseService :IRepository<Franchise>
     {
+
     }
 }
