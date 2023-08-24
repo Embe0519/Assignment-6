@@ -15,20 +15,12 @@ namespace MovieAPI.Services.CharacterServices
 
         public async Task<ICollection<Character>> GetCharactersByMovie(int id)
         {
-            return await _context.Characters
-                .Include(character => character.CharacterMovies)
-                .Where(character => character.CharacterMovies
-                    .Any(movie => movie.MovieId == id))
+          var characterByMovie = await _context.Characters
+                .Where(c => c.CharacterMovies.Any(cm => cm.MovieId == id))
                 .ToListAsync();
+            return characterByMovie;
         }
 
-        //public async Task<Collection<Character>> GetCharacterByFranchise(int id)
-        //{
-        //    return await _context.Characters
-        //        .Include(character => character.Id)
-        //        .Where(character => character.Id)
-
-        //}
 
         public async Task UpdateCharacterMovies(Character character, IEnumerable<int> movieIds)
         {

@@ -45,29 +45,37 @@ namespace MovieAPI.Controllers
         }
 
         // GET: api/Characters/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ReadCharacterDto>> GetCharacter(int id)
+        [HttpGet("{id}/movies")]
+        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetMoviesByCharacterId(int id)
         {
-          //if (_context.Characters == null)
-          //{
-          //    return NotFound();
-          //}
-          //  var character = await _context.Characters.FindAsync(id);
+            //if (_context.Characters == null)
+            //{
+            //    return NotFound();
+            //}
+            //  var character = await _context.Characters.FindAsync(id);
 
-          //  if (character == null)
-          //  {
-          //      return NotFound();
-          //  }
+            //  if (character == null)
+            //  {
+            //      return NotFound();
+            //  }
 
-          //  return character;
-
-            var character = await _service.GetByIdAsync(id);
-            if (character == null)
+            //  return character;
+            if (!await CharacterExists(id))
             {
-                return NotFound(); 
+                return NotFound();
             }
 
-            var characterDto = _mapper.Map<ReadCharacterDto>(character);
+            // Get albums by artist using service
+            var character = await _service.GetCharactersByMovie(id);
+
+            if (character == null)
+            {
+                return NotFound();
+            }
+
+            // Map domain to dtos
+            var characterDto = _mapper.Map<List<ReadCharacterDto>>(character);
+
             return Ok(characterDto);
 
 
