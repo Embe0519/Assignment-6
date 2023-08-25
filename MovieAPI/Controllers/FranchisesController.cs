@@ -73,7 +73,14 @@ namespace MovieAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    // Refresh the entity state from the database
+                    var existingFranchise = await _service.GetByIdAsync(id);
+
+                    // Update the entity with changes from the DTO
+                    _mapper.Map(franchiseDto, existingFranchise);
+
+                    // Save the changes again
+                    await _service.AddAsync(franchise);
                 }
             }
             return NoContent();
