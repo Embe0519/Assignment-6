@@ -28,6 +28,10 @@ namespace MovieAPI.Controllers
         }
 
         // GET: api/Characters
+        /// <summary>
+        /// Get all characters
+        /// </summary>
+        /// <returns>An array of characters</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetCharacters()
         {
@@ -38,10 +42,23 @@ namespace MovieAPI.Controllers
             return Ok(charactersDto);
         }
 
-  
+        // GET: api/Characters/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">The Id of the Franchise you want to get</param>
+        /// <returns>A character object</returns>
+        [HttpGet("{id}/movies")]
+        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetMoviesByCharacterId(int id)
+        {
 
         // PUT: api/Characters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update a character
+        /// </summary>
+        /// <param name="id">The Id of the character you want to update</param>
+        /// <param name="characterDto">The updated character object</param>
+        /// <returns>An Http response code based on the outcome of the transaction.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCharacter(int id, UpdateCharacterDto characterDto)
         {
@@ -74,7 +91,11 @@ namespace MovieAPI.Controllers
         }
 
         // POST: api/Characters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Add a new character
+        /// </summary>
+        /// <param name="characterDto">The nwe character object</param>
+        /// <returns>The newly added character object</returns>
         [HttpPost]
         public async Task<ActionResult<ReadCharacterDto>> PostCharacter(CreateCharacterDto characterDto)
         {
@@ -86,6 +107,11 @@ namespace MovieAPI.Controllers
         }
 
         // DELETE: api/Characters/5
+        /// <summary>
+        /// Delete a character
+        /// </summary>
+        /// <param name="id">The Id of the character you want to delete</param>
+        /// <returns>An Http response code based on the outcome of the transaction</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharacter(int id)
         {
@@ -106,7 +132,11 @@ namespace MovieAPI.Controllers
             await _service.DeleteAsync(character);
             return NoContent();
         }
-
+        /// <summary>
+        /// A helper method to check if a specific franchise exists.
+        /// </summary>
+        /// <param name="id">The Id of the franchise you want to check exists.</param>
+        /// <returns>True if the franchise exists.</returns>
         private async Task<bool> CharacterExists(int id)
         {
             return await _service.ExistsWithIdAsync(id);
