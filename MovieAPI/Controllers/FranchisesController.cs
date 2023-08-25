@@ -28,6 +28,10 @@ namespace MovieAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Get all franchises
+        /// </summary>
+        /// <returns>An array of franchises</returns>
         // GET: api/Franchises
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadFranchisesDto>>> GetFranchises()
@@ -45,6 +49,11 @@ namespace MovieAPI.Controllers
             return Ok(franchiseDto);
         }
 
+        /// <summary>
+        /// Gat franchise by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>A franchise object</returns>
         // GET: api/Franchises/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ReadFranchisesDto>> GetFranchise(int id)
@@ -71,8 +80,12 @@ namespace MovieAPI.Controllers
             return Ok(franchiseDto);
         }
 
-        // PUT: api/Franchises/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update franchise 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="franchiseDto"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFranchise(int id, UpdateFranchisesDto franchiseDto)
         {
@@ -119,8 +132,11 @@ namespace MovieAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Franchises
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Add a new franchise
+        /// </summary>
+        /// <param name="franchiseDto"></param>
+        /// <returns>The newly added franchise object</returns>
         [HttpPost]
         public async Task<ActionResult<ReadFranchisesDto>> PostFranchise(CreateFranchisesDto franchiseDto)
         {
@@ -139,6 +155,11 @@ namespace MovieAPI.Controllers
             return CreatedAtAction("GetFranchise", franchiseId, franchiseDto);
         }
 
+        /// <summary>
+        /// Delete a franchise 
+        /// </summary>
+        /// <param name="id">The Id of the Franchise you want to delete.</param>
+        /// <returns></returns>
         // DELETE: api/Franchises/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFranchise(int id)
@@ -173,6 +194,11 @@ namespace MovieAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// A helper method to check if a specific Franchise exists.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private async Task <bool> FranchiseExists(int id)
         {
             return await _service.ExistsWithIdAsync(id);

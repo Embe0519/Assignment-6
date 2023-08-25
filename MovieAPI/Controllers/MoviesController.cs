@@ -51,7 +51,7 @@ namespace MovieAPI.Controllers
         /// Get an Movie by Id.
         /// </summary>
         /// <param name="id">The Id of the Movie you want to get.</param>
-        /// <returns>An Movie object.</returns>
+        /// <returns>A Movie object.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ReadMoviesDto>> GetMovie(int id)
         {
