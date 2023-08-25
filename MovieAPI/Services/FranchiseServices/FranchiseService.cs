@@ -46,5 +46,27 @@ namespace MovieAPI.Services.FranchiseServices
         {
             return (_context.Franchises?.Any(franchise => franchise.Id == id)).GetValueOrDefault();
         }
+        public bool FranchiseExists()
+        {
+            return _context.Franchises == null;
+        }
+        public async Task<ICollection<Movie>> GetMoviesByFranchise(int Id)
+        {
+            var moviesByFranchise = await _context.Movies
+                .Where(x => x.FranchiseId == Id)
+                .ToListAsync();
+
+            return moviesByFranchise;
+        }
+
+        public async Task<ICollection<Character>> GetCharactersByFranchise(int Id)
+        {
+            var charactersByFranchise = await _context.Characters
+                .Where(character => character.CharacterMovies
+                    .Any(cm => cm.Movie.FranchiseId == Id))
+                .ToListAsync();
+
+            return charactersByFranchise;
+        }
     }
 }

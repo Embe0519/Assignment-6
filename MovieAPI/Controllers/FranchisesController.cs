@@ -63,6 +63,34 @@ namespace MovieAPI.Controllers
             return Ok(franchiseDto);
         }
 
+        
+        /// <summary>
+        /// Get all movies for a specific franchise.
+        /// </summary>
+        /// <param name="id">The Id of the franchise whose movies you want to fetch.</param>
+        /// <returns>An array of movies.</returns>
+        [HttpGet("{id}/movies")]
+        public async Task<ActionResult<IEnumerable<ReadMoviesDto>>> GetMoviesByFranchise(int id)
+        {
+            if (_service.FranchiseExists())
+            {
+                return NotFound();
+            }
+
+            // Retrieve artists from service
+            var movies = await _service.GetMoviesByFranchise(id);
+
+            if (movies == null)
+            {
+                return NotFound();
+            }
+
+            // Map domain artists to dtos
+            var movieDto = _mapper.Map<List<ReadMoviesDto>>(movies);
+
+            return movieDto;
+        }
+
         /// <summary>
         /// Update franchise 
         /// </summary>
@@ -97,6 +125,28 @@ namespace MovieAPI.Controllers
                 }
             }
             return NoContent();
+        }
+
+        
+        /// <summary>
+        /// Get all characters for a specific franchise. 
+        /// </summary>
+        /// <param name="id">The Id of the franchise whose characters you want to fetch.</param>
+        /// <returns>An array of characters.</returns>
+        [HttpGet("{id}/characters")]
+        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetCharactersByFranchise(int id) 
+        {
+            if (_service.FranchiseExists())
+            {
+                return NotFound();
+            }
+
+            var characters = await _service.GetCharactersByFranchise(id);
+
+            
+            var characterDtos = _mapper.Map<List<ReadCharacterDto>>(characters);
+
+            return characterDtos;
         }
 
         /// <summary>

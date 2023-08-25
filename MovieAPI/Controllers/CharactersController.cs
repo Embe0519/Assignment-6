@@ -42,15 +42,8 @@ namespace MovieAPI.Controllers
             return Ok(charactersDto);
         }
 
-        // GET: api/Characters/5
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id">The Id of the Franchise you want to get</param>
-        /// <returns>A character object</returns>
-        [HttpGet("{id}/movies")]
-        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetMoviesByCharacterId(int id)
-        {
+       
+       
 
         // PUT: api/Characters/5
         /// <summary>
@@ -83,8 +76,8 @@ namespace MovieAPI.Controllers
                     // Update the entity with changes from the DTO
                     _mapper.Map(characterDto, existingCharacter);
 
-                    // Save the changes again
-                    await _service.AddAsync(character);
+                    // Save the changes 
+                    await _service.AddAsync(existingCharacter);
                 }
             }
             return NoContent();
