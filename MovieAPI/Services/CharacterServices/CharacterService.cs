@@ -44,7 +44,8 @@ namespace MovieAPI.Services.CharacterServices
 
         public async Task UpdateAsync(Character entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
+            var entety = _context.Entry(entity);
+            entety.State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 

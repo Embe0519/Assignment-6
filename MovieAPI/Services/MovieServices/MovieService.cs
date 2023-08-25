@@ -74,7 +74,8 @@ namespace MovieAPI.Services.MovieServices
 
         public async Task UpdateAsync(Movie entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
+            var entety = _context.Entry(entity);
+            entety.State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
         }

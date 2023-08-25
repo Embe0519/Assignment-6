@@ -15,7 +15,8 @@ namespace MovieAPI.Services.FranchiseServices
 
         public async Task UpdateAsync(Franchise entity)
         {
-            _context.Entry(entity).State = EntityState.Modified;
+            var entety = _context.Entry(entity);
+            entety.State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
