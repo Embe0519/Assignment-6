@@ -32,13 +32,7 @@ namespace MovieAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadFranchisesDto>>> GetFranchises()
         {
-          //if (_context.Franchises == null)
-          //{
-          //    return NotFound();
-          //}
-          //  var franchisesDomain = await _context.Franchises.ToListAsync();
-          //  var franchiseDto = _mapper.Map<List<ReadFranchisesDto>>(franchisesDomain);
-          //  return franchiseDto;
+         
 
             var franchises = await _service.GetAllAsync();
             var franchiseDto = _mapper.Map<List<ReadFranchisesDto>>(franchises);
@@ -49,18 +43,7 @@ namespace MovieAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ReadFranchisesDto>> GetFranchise(int id)
         {
-            //if (_context.Franchises == null)
-            //{
-            //    return NotFound();
-            //}
-            //  var franchise = await _context.Franchises.FindAsync(id);
-
-            //  if (franchise == null)
-            //  {
-            //      return NotFound();
-            //  }
-
-            //  return franchise;
+         
             var franchise = await _service.GetByIdAsync(id);
             if (franchise == null)
             {
@@ -76,30 +59,7 @@ namespace MovieAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFranchise(int id, UpdateFranchisesDto franchiseDto)
         {
-            //if (id != franchise.Id)
-            //{
-            //    return BadRequest();
-            //}
-
-            //_context.Entry(franchise).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!FranchiseExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return NoContent();
+          
             var franchise = _mapper.Map<Franchise>(franchiseDto);
             try
             {
@@ -124,16 +84,7 @@ namespace MovieAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ReadFranchisesDto>> PostFranchise(CreateFranchisesDto franchiseDto)
         {
-            //if (_context.Franchises == null)
-            //{
-            //    return Problem("Entity set 'MovieDbContext.Franchises'  is null.");
-            //}
-
-            //  var franchiseDomain = _mapper.Map<Franchise>(franchiseDto);
-            //  _context.Franchises.Add(franchiseDomain);
-            //  await _context.SaveChangesAsync();
-
-            //  return CreatedAtAction("GetFranchise", new { id = franchiseDomain.Id }, franchiseDto);
+           
             var franchise = _mapper.Map<Franchise>(franchiseDto);
             var franchiseId = await _service.AddAsync(franchise);
             return CreatedAtAction("GetFranchise", franchiseId, franchiseDto);
@@ -143,20 +94,7 @@ namespace MovieAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFranchise(int id)
         {
-            //if (_context.Franchises == null)
-            //{
-            //    return NotFound();
-            //}
-            //var franchise = await _context.Franchises.FindAsync(id);
-            //if (franchise == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.Franchises.Remove(franchise);
-            //await _context.SaveChangesAsync();
-
-            //return NoContent();
+         
             if (!await _service.ExistsWithIdAsync(id))
             {
                 return NotFound();

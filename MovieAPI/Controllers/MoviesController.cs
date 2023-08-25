@@ -74,17 +74,19 @@ namespace MovieAPI.Controllers
         /// <summary>
         /// Get all of the characters associated with a specific Movie.
         /// </summary>
-        /// <param name="id">The Id of the Movie whose Artists you want to get.</param>
+        /// <param name="id">The Id of the Movie whose characters you want to get.</param>
         /// <returns>An array of Characters.</returns>
+        // GET: api/Characters/5
         [HttpGet("{id}/movies")]
-        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetCharactersByMovieId(int id)
+        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetMoviesByCharacterId(int id)
         {
+      
             if (!await MovieExistsAsync(id))
             {
                 return NotFound();
             }
 
-            // Get artists by album id from the service
+            // Get characters by movie using service
             var character = await _service.GetCharactersByMovie(id);
 
             if (character == null)
@@ -92,10 +94,12 @@ namespace MovieAPI.Controllers
                 return NotFound();
             }
 
-            // Map from domain to dtos
-            var characterDtos = _mapper.Map<List<ReadCharacterDto>>(character);
+            // Map domain to dtos
+            var characterDto = _mapper.Map<List<ReadCharacterDto>>(character);
 
-            return Ok(characterDtos);
+            return Ok(characterDto);
+
+
         }
 
         // PUT: api/movies/5
