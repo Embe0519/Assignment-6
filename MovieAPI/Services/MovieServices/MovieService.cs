@@ -85,10 +85,11 @@ namespace MovieAPI.Services.MovieServices
             await _context.SaveChangesAsync();
         }
 
-        public Task<bool> ExistsWithIdAsync(int id)
+        public async Task<bool> ExistsWithIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return (_context.Movies?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
     }
 
 }

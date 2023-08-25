@@ -108,7 +108,7 @@ namespace MovieAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMovie(int id, UpdateMoviesDto movieDto)
         {
-            // Map dto to domain object
+            // Map from dto to domain
             var movie = _mapper.Map<Movie>(movieDto);
 
             try
@@ -123,12 +123,20 @@ namespace MovieAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    // Refresh the entity state from the database
+                    var existingCharacter = await _service.GetByIdAsync(id);
+
+                    // Update the entity with changes from the DTO
+                    _mapper.Map(movieDto, existingCharacter);
+
+                    // Save the changes again
+                    await _service.AddAsync(movie);
                 }
             }
 
             return NoContent();
         }
+
 
         // PUT: api/Movie/1/Characters
         /// <summary>
