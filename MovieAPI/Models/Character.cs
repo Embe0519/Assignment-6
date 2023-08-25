@@ -18,6 +18,7 @@ namespace MovieAPI.Models
         public string? Gender { get; set; }
         [MaxLength(150)]
         public string? Picture { get; set; } //Just URL
+       
         public ICollection<CharacterMovie> CharacterMovies { get; set; }
     }
 }

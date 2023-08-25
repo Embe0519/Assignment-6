@@ -36,13 +36,7 @@ namespace MovieAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadFranchisesDto>>> GetFranchises()
         {
-          //if (_context.Franchises == null)
-          //{
-          //    return NotFound();
-          //}
-          //  var franchisesDomain = await _context.Franchises.ToListAsync();
-          //  var franchiseDto = _mapper.Map<List<ReadFranchisesDto>>(franchisesDomain);
-          //  return franchiseDto;
+         
 
             var franchises = await _service.GetAllAsync();
             var franchiseDto = _mapper.Map<List<ReadFranchisesDto>>(franchises);
@@ -58,18 +52,7 @@ namespace MovieAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ReadFranchisesDto>> GetFranchise(int id)
         {
-            //if (_context.Franchises == null)
-            //{
-            //    return NotFound();
-            //}
-            //  var franchise = await _context.Franchises.FindAsync(id);
-
-            //  if (franchise == null)
-            //  {
-            //      return NotFound();
-            //  }
-
-            //  return franchise;
+         
             var franchise = await _service.GetByIdAsync(id);
             if (franchise == null)
             {
@@ -78,6 +61,34 @@ namespace MovieAPI.Controllers
 
             var franchiseDto = _mapper.Map<ReadCharacterDto>(franchise);
             return Ok(franchiseDto);
+        }
+
+        
+        /// <summary>
+        /// Get all movies for a specific franchise.
+        /// </summary>
+        /// <param name="id">The Id of the franchise whose movies you want to fetch.</param>
+        /// <returns>An array of movies.</returns>
+        [HttpGet("{id}/movies")]
+        public async Task<ActionResult<IEnumerable<ReadMoviesDto>>> GetMoviesByFranchise(int id)
+        {
+            if (_service.FranchiseExists())
+            {
+                return NotFound();
+            }
+
+            // Retrieve artists from service
+            var movies = await _service.GetMoviesByFranchise(id);
+
+            if (movies == null)
+            {
+                return NotFound();
+            }
+
+            // Map domain artists to dtos
+            var movieDto = _mapper.Map<List<ReadMoviesDto>>(movies);
+
+            return movieDto;
         }
 
         /// <summary>
@@ -89,30 +100,7 @@ namespace MovieAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFranchise(int id, UpdateFranchisesDto franchiseDto)
         {
-            //if (id != franchise.Id)
-            //{
-            //    return BadRequest();
-            //}
-
-            //_context.Entry(franchise).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!FranchiseExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return NoContent();
+          
             var franchise = _mapper.Map<Franchise>(franchiseDto);
             try
             {
@@ -126,10 +114,39 @@ namespace MovieAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    // Refresh the entity state from the database
+                    var existingFranchise = await _service.GetByIdAsync(id);
+
+                    // Update the entity with changes from the DTO
+                    _mapper.Map(franchiseDto, existingFranchise);
+
+                    // Save the changes again
+                    await _service.AddAsync(franchise);
                 }
             }
             return NoContent();
+        }
+
+        
+        /// <summary>
+        /// Get all characters for a specific franchise. 
+        /// </summary>
+        /// <param name="id">The Id of the franchise whose characters you want to fetch.</param>
+        /// <returns>An array of characters.</returns>
+        [HttpGet("{id}/characters")]
+        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetCharactersByFranchise(int id) 
+        {
+            if (_service.FranchiseExists())
+            {
+                return NotFound();
+            }
+
+            var characters = await _service.GetCharactersByFranchise(id);
+
+            
+            var characterDtos = _mapper.Map<List<ReadCharacterDto>>(characters);
+
+            return characterDtos;
         }
 
         /// <summary>
@@ -140,16 +157,7 @@ namespace MovieAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ReadFranchisesDto>> PostFranchise(CreateFranchisesDto franchiseDto)
         {
-            //if (_context.Franchises == null)
-            //{
-            //    return Problem("Entity set 'MovieDbContext.Franchises'  is null.");
-            //}
-
-            //  var franchiseDomain = _mapper.Map<Franchise>(franchiseDto);
-            //  _context.Franchises.Add(franchiseDomain);
-            //  await _context.SaveChangesAsync();
-
-            //  return CreatedAtAction("GetFranchise", new { id = franchiseDomain.Id }, franchiseDto);
+           
             var franchise = _mapper.Map<Franchise>(franchiseDto);
             var franchiseId = await _service.AddAsync(franchise);
             return CreatedAtAction("GetFranchise", franchiseId, franchiseDto);
@@ -164,20 +172,7 @@ namespace MovieAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFranchise(int id)
         {
-            //if (_context.Franchises == null)
-            //{
-            //    return NotFound();
-            //}
-            //var franchise = await _context.Franchises.FindAsync(id);
-            //if (franchise == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.Franchises.Remove(franchise);
-            //await _context.SaveChangesAsync();
-
-            //return NoContent();
+         
             if (!await _service.ExistsWithIdAsync(id))
             {
                 return NotFound();

@@ -35,43 +35,15 @@ namespace MovieAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetCharacters()
         {
+    
 
             var characters = await _service.GetAllAsync();
             var charactersDto = _mapper.Map<List<ReadCharacterDto>>(characters);
             return Ok(charactersDto);
         }
 
-        // GET: api/Characters/5
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id">The Id of the Franchise you want to get</param>
-        /// <returns>A character object</returns>
-        [HttpGet("{id}/movies")]
-        public async Task<ActionResult<IEnumerable<ReadCharacterDto>>> GetMoviesByCharacterId(int id)
-        {
-
-            //  return character;
-            if (!await CharacterExists(id))
-            {
-                return NotFound();
-            }
-
-            // Get albums by artist using service
-            var character = await _service.GetCharactersByMovie(id);
-
-            if (character == null)
-            {
-                return NotFound();
-            }
-
-            // Map domain to dtos
-            var characterDto = _mapper.Map<List<ReadCharacterDto>>(character);
-
-            return Ok(characterDto);
-
-
-        }
+       
+       
 
         // PUT: api/Characters/5
         /// <summary>
@@ -83,30 +55,7 @@ namespace MovieAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCharacter(int id, UpdateCharacterDto characterDto)
         {
-            //if (id != character.Id)
-            //{
-            //    return BadRequest();
-            //}
-
-            //_context.Entry(character).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!CharacterExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return NoContent();
+            
 
             var character = _mapper.Map<Character>(characterDto);
             try
@@ -121,7 +70,14 @@ namespace MovieAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    // Refresh the entity state from the database
+                    var existingCharacter = await _service.GetByIdAsync(id);
+
+                    // Update the entity with changes from the DTO
+                    _mapper.Map(characterDto, existingCharacter);
+
+                    // Save the changes 
+                    await _service.AddAsync(existingCharacter);
                 }
             }
             return NoContent();
@@ -136,16 +92,7 @@ namespace MovieAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ReadCharacterDto>> PostCharacter(CreateCharacterDto characterDto)
         {
-            //if (_context.Characters == null)
-            //{
-            //    return Problem("Entity set 'MovieDbContext.Characters'  is null.");
-            //}
-
-            //  var characterDomain = _mapper.Map<Character>(characterDto);
-            //  _context.Characters.Add(characterDomain);
-            //  await _context.SaveChangesAsync();
-
-            //  return CreatedAtAction("GetCharacter", new { id = characterDomain.Id }, characterDto);
+        
 
             var character = _mapper.Map<Character>(characterDto);
             var characterId = await _service.AddAsync(character);
@@ -161,20 +108,7 @@ namespace MovieAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharacter(int id)
         {
-            //if (_context.Characters == null)
-            //{
-            //    return NotFound();
-            //}
-            //var character = await _context.Characters.FindAsync(id);
-            //if (character == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.Characters.Remove(character);
-            //await _context.SaveChangesAsync();
-
-            //return NoContent();
+          
 
             if (!await _service.ExistsWithIdAsync(id))
             {

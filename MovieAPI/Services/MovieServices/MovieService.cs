@@ -15,12 +15,10 @@ namespace MovieAPI.Services.MovieServices
 
         public async Task<ICollection<Character>> GetCharactersByMovie(int id)
         {
-            return await _context.Characters
-                .Include(character => character.CharacterMovies)
-                .Where(character => character.CharacterMovies
-                    .Any(movie => movie.MovieId == id))
-                .ToListAsync();
-
+            var characterByMovie = await _context.Characters
+                  .Where(c => c.CharacterMovies.Any(cm => cm.MovieId == id))
+                  .ToListAsync();
+            return characterByMovie;
         }
 
         public async Task<Movie> GetMovieIncludingCharacters(int id)
@@ -88,7 +86,7 @@ namespace MovieAPI.Services.MovieServices
 
         public async Task<bool> ExistsWithIdAsync(int id)
         {
-            return (_context.Movies?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Movies?.Any(movie => movie.Id == id)).GetValueOrDefault();
         }
 
     }

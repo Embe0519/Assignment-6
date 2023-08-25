@@ -12,6 +12,7 @@ namespace MovieAPI.DTOs.CharactersDtos
         public string? Gender { get; set; }
        
         public string? Picture { get; set; }
-        //public ICollection<CharacterMovie> CharacterMovies { get; set; }
+       
+
     }
 }

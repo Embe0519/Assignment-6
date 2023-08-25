@@ -41,5 +41,6 @@
         /// </summary>
         /// <param name="entity">The entity you want to delete.</param>
         Task DeleteAsync(T entity);
+        
     }
 }
