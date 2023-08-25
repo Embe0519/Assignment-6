@@ -104,7 +104,7 @@ namespace MovieAPI.Controllers
 
         // PUT: api/movies/5
         /// <summary>
-        /// Update an Movie.
+        /// Update a Movie.
         /// </summary>
         /// <param name="id">The Id of the Movie you want to update.</param>
         /// <param name="movieDto">The updated Movie object.</param>
